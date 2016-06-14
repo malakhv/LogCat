@@ -1,4 +1,4 @@
-// Define global artifact property
+/* Define global artifact property */
 ext {
     ARTIFACT_NAME = 'logcat'
     ARTIFACT_VERSION_CODE = '1'

@@ -1,12 +1,7 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// Auto-generated code
 buildscript {
     repositories { jcenter() }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
-    }
+    dependencies { classpath 'com.android.tools.build:gradle:2.1.0' }
 }
 allprojects { repositories { jcenter() } }
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
+task clean(type: Delete) { delete rootProject.buildDir }
