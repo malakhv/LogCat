@@ -21,14 +21,11 @@ class Artifact {
     String path, groupId, version, id, name
 }
 
-// The public group ID
-def GROUP_ID_PUBLIC = "com.malakhv.libs"
-
 // Define artifact
 def artifact = new Artifact (
     id: project.ARTIFACT_NAME,
     name: project.ARTIFACT_NAME,
-    groupId: GROUP_ID_PUBLIC,
+    groupId: ARTIFACT_GROUP_ID,
     path: "${rootDir}/artifacts/${project.ARTIFACT_NAME}",
     version: project.ARTIFACT_VERSION_NAME
 )

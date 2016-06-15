@@ -3,6 +3,7 @@ ext {
     ARTIFACT_NAME = 'logcat'
     ARTIFACT_VERSION_CODE = '1'
     ARTIFACT_VERSION_NAME = '1.0.0'
+    ARTIFACT_GROUP_ID = "com.malakhv.libs"
 }
 
 apply plugin: 'com.android.library'
