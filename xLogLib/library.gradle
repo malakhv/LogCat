@@ -73,13 +73,18 @@ task zipRelease(type: Zip) {
     archiveName "${artifact.name}-${artifact.version}.zip"
 }
 
-task generateRelease << {
-    println "Release ${artifact.version} dir - ${artifact.path}/"
-    println "Release ${artifact.version} zip - ${rootDir}/artifacts/${artifact.name}-${artifact.version}.zip"
+task makeArtifact << {
+    println "----------------------------------------------------------------------------------"
+    println "Artifact make complete successfully!"
+    println "Name: ${artifact.name}"
+    println "Version: ${artifact.version}"
+    println "Group: ${artifact.groupId}"
+    println "Patch: ${artifact.path}"
+    println "----------------------------------------------------------------------------------"
 }
 
-generateRelease.dependsOn(uploadArchives)
-generateRelease.dependsOn(zipRelease)
+makeArtifact.dependsOn(uploadArchives)
+makeArtifact.dependsOn(zipRelease)
 
 artifacts {
     archives androidSourcesJar
