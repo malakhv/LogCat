@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">xLogLib</string>
+    <string name="instruction">You can change the default level by setting a system property\nadb shell setprop log.tag.[APP_TAG] [LEVEL]</string>
 </resources>
