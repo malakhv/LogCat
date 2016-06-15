@@ -74,6 +74,13 @@ import android.text.TextUtils;
  * <br>&nbsp;<br>
  * and place that in {@code /data/local.prop}.</p>
  *
+ * <p><b>Tip:</b> Don't forget to change log level for main app log tag to DEBUG via shell command,
+ * or you could specify debug flag during initialization, for example:
+ * <br>&nbsp;<br>
+ * &#09;{@code LogCat.init(APP_TAG, BuildConfig.DEBUG);}
+ * <br>&nbsp;<br>
+ * </p>
+ *
  * @author Mikhail.Malakhov [malakhv@live.ru|https://github.com/malakhv]
  *
  * @see android.util.Log
@@ -115,6 +122,12 @@ public final class LogCat {
     /** The main LogCat tag for app. */
     private static String sAppTag = null;
 
+    /**
+     * The debug flag. If it equals {@code true}, all log levels will be enabled for
+     * {@link LogCat#sAppTag}. Use {@code true} for debug mode only.
+     * */
+    private static boolean sDebug = false;
+
     /** State of initialisation {@link LogCat} in app. */
     private static boolean sWasInit = false;
 
@@ -138,7 +151,18 @@ public final class LogCat {
      * @param tag The main app LogCat tag that will use into all methods for print logs.
      * @throws IllegalArgumentException If the appTag is null or empty, or the appTag.length() > 23.
      * */
-    public static void init(String tag) {
+    public static void init(String tag) { init(tag, false); }
+
+    /**
+     * Before using this class for write logs, you should initialize it and specify the main log
+     * tag for your app. This tag will be used into all methods for print logs as unique log tag.
+     *
+     * @param tag The main app LogCat tag that will use into all methods for print logs.
+     * @param debug If it equals {@code true}, all log levels will be enabled for specified
+     *              {@code tag}. Use {@code true} for debug mode only.
+     * @throws IllegalArgumentException If the appTag is null or empty, or the appTag.length() > 23.
+     * */
+    public static void init(String tag, boolean debug) {
         // Check initial tag is null or empty
         if (isTagEmpty(tag)) {
             throw new IllegalArgumentException(LOG_TAG + TAG_DELIMITER +
@@ -149,6 +173,7 @@ public final class LogCat {
             throw new IllegalArgumentException(LOG_TAG + TAG_DELIMITER + "The tag is too long");
         }
         sAppTag = tag.trim();
+        sDebug = debug;
         sWasInit = true;
         LogCat.d(LOG_TAG, "Init with app tag - " + sAppTag);
     }
@@ -162,8 +187,14 @@ public final class LogCat {
      * */
     public static boolean isLoggable(int level) {
         checkInit();
-        return android.util.Log.isLoggable(sAppTag, level);
+        return sDebug || android.util.Log.isLoggable(sAppTag, level);
     }
+
+    /**
+     * Returns {@code true} if log level for tag is {@link LogCat#DEBUG} or debug flag in
+     * {@link LogCat} is {@code true}.
+     * */
+    public static boolean isDebug() { return isLoggable(DEBUG); }
 
     /**
      * Send a {@link #VERBOSE} log message.

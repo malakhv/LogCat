@@ -37,3 +37,8 @@ Where level is either `VERBOSE`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `ASSERT`, or 
 log.tag.[APP_TAG]=[LEVEL]
 ```
 and place that in /data/local.prop.
+
+ __Tip:__ Don't forget to change log level for main app log tag to `DEBUG` via shell command, or you could specify debug flag during initialization, for example:
+```Java
+LogCat.init(APP_TAG, BuildConfig.DEBUG);
+```

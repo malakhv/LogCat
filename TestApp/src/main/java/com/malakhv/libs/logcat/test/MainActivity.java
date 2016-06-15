@@ -16,7 +16,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
      * setprop log.tag.xLogLib VERBOSE
      * */
     static {
-        LogCat.init("xLogLib");
+        LogCat.init("xLogLib", BuildConfig.DEBUG);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
         if (id == R.id.btn_d) {
-            LogCat.d(TAG, "Log level - DEBUG");
+            if (LogCat.isDebug()) LogCat.d(TAG, "Log level - DEBUG");
         }
 
         if (id == R.id.btn_v) {
