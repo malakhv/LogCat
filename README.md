@@ -1,7 +1,7 @@
 # xLogCat
 The library project includes classes for writing an app log in Android. Is essentially a wrapper for the standard Android [Log](https://developer.android.com/reference/android/util/Log.html) class. The main difference is the availability check on the current level logs while trying to log. Also, there is a possibility to change the log level for the application at runtime via adb.
 
-## LogCat class
+### LogCat class
 This class extends standard Android API for sending a log output. This class allows you to create log messages (similarly `android.util.Log` class). Generally, you should use the following `LogCat` methods, listed in order from the highest to lowest priority (or, least to most verbose):
 * `LogCat.e()` (ERROR)
 * `LogCat.w()` (WARN)
