@@ -92,14 +92,20 @@ public final class LogCat {
     /** Tag for LogCat. */
     private static final String LOG_TAG = LogCat.class.getSimpleName();
 
+    /*----------------------------------------------------------------------------------------*/
+    /* General constants
+    /*----------------------------------------------------------------------------------------*/
+
     /** String that will use as delimiter for tags in LogCat message. */
     private static final String TAG_DELIMITER = ": ";
 
     /** The maximum length of tag. */
     private static final int TAG_MAX_LENGTH = 23;
 
-    // Grabbing the native values from Android's native logging facilities,
-    // to make for easy migration, interaction and accessibility.
+    /*----------------------------------------------------------------------------------------*/
+    /* Grabbing the native values from Android's native logging facilities,
+    /* to make for easy migration, interaction and accessibility.
+    /*----------------------------------------------------------------------------------------*/
 
     /** Priority constant for the println method; use LogCat.v. */
     public static final int VERBOSE = android.util.Log.VERBOSE;
@@ -119,6 +125,10 @@ public final class LogCat {
     /** Priority constant for the println method. */
     public static final int ASSERT = android.util.Log.ASSERT;
 
+    /*----------------------------------------------------------------------------------------*/
+    /* General static fields
+    /*----------------------------------------------------------------------------------------*/
+
     /** The main LogCat tag for app. */
     private static String sAppTag = null;
 
@@ -131,18 +141,14 @@ public final class LogCat {
     /** State of initialisation {@link LogCat} in app. */
     private static boolean sWasInit = false;
 
+    /*----------------------------------------------------------------------------------------*/
+    /* Constructor and static initialization methods
+    /*----------------------------------------------------------------------------------------*/
+
     /**
      * This class has only static data, not need to create instance.
      * */
     private LogCat() {}
-
-    /**
-     * Returns {@code true} if the tag is null or empty.
-     * @param tag The tag to be examined.
-     * */
-    private static boolean isTagEmpty(String tag) {
-        return TextUtils.isEmpty(tag) || TextUtils.isEmpty(tag.trim());
-    }
 
     /**
      * Before using this class for write logs, you should initialize it and specify the main log
@@ -179,6 +185,27 @@ public final class LogCat {
     }
 
     /**
+     * Returns {@code true} if the tag is null or empty.
+     * @param tag The tag to be examined.
+     * */
+    private static boolean isTagEmpty(String tag) {
+        return TextUtils.isEmpty(tag) || TextUtils.isEmpty(tag.trim());
+    }
+
+    /**
+     * Checks that this class was been initialized or not.
+     * @throws IllegalStateException if this class was not been initialized.
+     * */
+    private static void checkInit() {
+        if (!sWasInit) throw new IllegalStateException(LOG_TAG + TAG_DELIMITER +
+                "You should init LogCat before use it.");
+    }
+
+    /*----------------------------------------------------------------------------------------*/
+    /* Methods for checking current log level
+    /*----------------------------------------------------------------------------------------*/
+
+    /**
      * Checks to see whether or not a log for the specified tag is loggable at the specified level.
      *
      * @param level The level to check.
@@ -196,6 +223,10 @@ public final class LogCat {
      * */
     public static boolean isDebug() { return isLoggable(DEBUG); }
 
+    /*----------------------------------------------------------------------------------------*/
+    /* Log level - VERBOSE
+    /*----------------------------------------------------------------------------------------*/
+
     /**
      * Send a {@link #VERBOSE} log message.
      * @param msg The message you would like logged.
@@ -209,9 +240,7 @@ public final class LogCat {
      *            activity where the log call occurs. Maybe {@code null}.
      * @param msg The message you would like logged.
      * */
-    public static int v(String tag, String msg) {
-        return LogCat.println(VERBOSE, tag, msg);
-    }
+    public static int v(String tag, String msg) { return LogCat.println(VERBOSE, tag, msg); }
 
     /**
      * Send a {@link #VERBOSE} log message and log the exception.
@@ -219,9 +248,7 @@ public final class LogCat {
      * @param msg The message you would like logged.
      * @param tr  An exception to log.
      * */
-    public static int v(String msg, Throwable tr) {
-        return LogCat.v(null, msg, tr);
-    }
+    public static int v(String msg, Throwable tr) { return LogCat.v(null, msg, tr); }
 
     /**
      * Send a {@link #VERBOSE} log message and log the exception.
@@ -234,6 +261,10 @@ public final class LogCat {
     public static int v(String tag, String msg, Throwable tr) {
         return LogCat.println(VERBOSE, tag, msg, tr);
     }
+
+    /*----------------------------------------------------------------------------------------*/
+    /* Log level - DEBUG
+    /*----------------------------------------------------------------------------------------*/
 
     /**
      * Send a {@link #DEBUG} log message.
@@ -248,9 +279,7 @@ public final class LogCat {
      *            activity where the log call occurs. Maybe {@code null}.
      * @param msg The message you would like logged.
      * */
-    public static int d(String tag, String msg) {
-        return LogCat.println(DEBUG, tag, msg);
-    }
+    public static int d(String tag, String msg) { return LogCat.println(DEBUG, tag, msg); }
 
     /**
      * Send a {@link #DEBUG} log message and log the exception.
@@ -271,6 +300,10 @@ public final class LogCat {
     public static int d(String tag, String msg, Throwable tr) {
         return LogCat.println(DEBUG, tag, msg, tr);
     }
+
+    /*----------------------------------------------------------------------------------------*/
+    /* Log level - INFO
+    /*----------------------------------------------------------------------------------------*/
 
     /**
      * Send an {@link #INFO} log message.
@@ -294,9 +327,7 @@ public final class LogCat {
      * @param msg The message you would like logged.
      * @param tr  An exception to log.
      * */
-    public static int i(String msg, Throwable tr) {
-        return LogCat.i(null, msg, tr);
-    }
+    public static int i(String msg, Throwable tr) { return LogCat.i(null, msg, tr); }
 
     /**
      * Send a {@link #INFO} log message and log the exception.
@@ -310,13 +341,15 @@ public final class LogCat {
         return LogCat.println(INFO, tag, msg, tr);
     }
 
+    /*----------------------------------------------------------------------------------------*/
+    /* Log level - WARN
+    /*----------------------------------------------------------------------------------------*/
+
     /**
      * Send a {@link #WARN} log message.
      * @param msg The message you would like logged.
      * */
-    public static int w(String msg) {
-        return LogCat.w(null, msg);
-    }
+    public static int w(String msg) { return LogCat.w(null, msg); }
 
     /**
      * Send a {@link #WARN} log message.
@@ -325,9 +358,7 @@ public final class LogCat {
      *            activity where the log call occurs. Maybe {@code null}.
      * @param msg The message you would like logged.
      * */
-    public static int w(String tag, String msg) {
-        return LogCat.println(WARN, tag, msg);
-    }
+    public static int w(String tag, String msg) { return LogCat.println(WARN, tag, msg); }
 
     /**
      * Send a {@link #WARN} log message and log the exception.
@@ -345,9 +376,7 @@ public final class LogCat {
      * Send a {@link #WARN} log message and log the exception.
      * @param tr An exception to log.
      * */
-    public static int w(Throwable tr) {
-        return LogCat.w(null, tr);
-    }
+    public static int w(Throwable tr) { return LogCat.w(null, tr); }
 
     /**
      * Send a {@link #WARN} log message and log the exception.
@@ -360,13 +389,15 @@ public final class LogCat {
         return LogCat.println(WARN, tag, android.util.Log.getStackTraceString(tr));
     }
 
+    /*----------------------------------------------------------------------------------------*/
+    /* Log level - ERROR
+    /*----------------------------------------------------------------------------------------*/
+
     /**
      * Send an {@link #ERROR} log message.
      * @param msg The message you would like logged.
      */
-    public static int e(String msg) {
-        return LogCat.e(null, msg);
-    }
+    public static int e(String msg) { return LogCat.e(null, msg); }
 
     /**
      * Send an {@link #ERROR} log message.
@@ -375,9 +406,7 @@ public final class LogCat {
      *            activity where the log call occurs. Maybe {@code null}.
      * @param msg The message you would like logged.
      * */
-    public static int e(String tag, String msg) {
-        return LogCat.println(ERROR, tag, msg);
-    }
+    public static int e(String tag, String msg) { return LogCat.println(ERROR, tag, msg); }
 
     /**
      * Send a {@link #ERROR} log message and log the exception.
@@ -385,9 +414,7 @@ public final class LogCat {
      * @param msg The message you would like logged.
      * @param tr  An exception to log.
      * */
-    public static int e(String msg, Throwable tr) {
-        return LogCat.e(null, msg, tr);
-    }
+    public static int e(String msg, Throwable tr) { return LogCat.e(null, msg, tr); }
 
     /**
      * Send a {@link #ERROR} log message and log the exception.
@@ -400,6 +427,10 @@ public final class LogCat {
     public static int e(String tag, String msg, Throwable tr) {
         return LogCat.println(ERROR, tag, msg, tr);
     }
+
+    /*----------------------------------------------------------------------------------------*/
+    /* Low-level logging calls
+    /*----------------------------------------------------------------------------------------*/
 
     /**
      * Low-level logging call.
@@ -419,15 +450,6 @@ public final class LogCat {
         } else {
             return -1;
         }
-    }
-
-    /**
-     * Checks that this class was been initialized or not.
-     * @throws IllegalStateException if this class was not been initialized.
-     * */
-    private static void checkInit() {
-        if (!sWasInit) throw new IllegalStateException(LOG_TAG + TAG_DELIMITER +
-                "You should init LogCat before use it.");
     }
 
     /**
