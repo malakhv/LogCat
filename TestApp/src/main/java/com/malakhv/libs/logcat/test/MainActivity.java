@@ -43,7 +43,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
         if (id == R.id.btn_i) {
-            LogCat.w(TAG, "Log level - INFO");
+            LogCat.i(TAG, "Log level - INFO");
         }
 
         if (id == R.id.btn_d) {
