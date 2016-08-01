@@ -243,6 +243,22 @@ public final class LogCat {
     public static int v(String tag, String msg) { return LogCat.println(VERBOSE, tag, msg); }
 
     /**
+     * Send a {@link #VERBOSE} log message.
+     *
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param format The format string (see {@link java.util.Formatter#format}).
+     * @param args The list of arguments passed to the formatter. If there are more arguments than
+     *             required by {@code format}, additional arguments are ignored.
+     *
+     * @throws NullPointerException if {@code format == null}.
+     * @throws java.util.IllegalFormatException if the format is invalid.
+     * */
+    public static int v(String tag, String format, Object... args) {
+        return LogCat.println(VERBOSE, tag, format, args);
+    }
+
+    /**
      * Send a {@link #VERBOSE} log message and log the exception.
      *
      * @param msg The message you would like logged.
@@ -280,6 +296,22 @@ public final class LogCat {
      * @param msg The message you would like logged.
      * */
     public static int d(String tag, String msg) { return LogCat.println(DEBUG, tag, msg); }
+
+    /**
+     * Send a {@link #DEBUG} log message.
+     *
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param format The format string (see {@link java.util.Formatter#format}).
+     * @param args The list of arguments passed to the formatter. If there are more arguments than
+     *             required by {@code format}, additional arguments are ignored.
+     *
+     * @throws NullPointerException if {@code format == null}.
+     * @throws java.util.IllegalFormatException if the format is invalid.
+     * */
+    public static int d(String tag, String format, Object... args) {
+        return LogCat.println(DEBUG, tag, format, args);
+    }
 
     /**
      * Send a {@link #DEBUG} log message and log the exception.
@@ -322,6 +354,22 @@ public final class LogCat {
     public static int i(String tag, String msg) { return LogCat.println(INFO, tag, msg); }
 
     /**
+     * Send a {@link #INFO} log message.
+     *
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param format The format string (see {@link java.util.Formatter#format}).
+     * @param args The list of arguments passed to the formatter. If there are more arguments than
+     *             required by {@code format}, additional arguments are ignored.
+     *
+     * @throws NullPointerException if {@code format == null}.
+     * @throws java.util.IllegalFormatException if the format is invalid.
+     * */
+    public static int i(String tag, String format, Object... args) {
+        return LogCat.println(INFO, tag, format, args);
+    }
+
+    /**
      * Send a {@link #INFO} log message and log the exception.
      *
      * @param msg The message you would like logged.
@@ -359,6 +407,22 @@ public final class LogCat {
      * @param msg The message you would like logged.
      * */
     public static int w(String tag, String msg) { return LogCat.println(WARN, tag, msg); }
+
+    /**
+     * Send a {@link #WARN} log message.
+     *
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param format The format string (see {@link java.util.Formatter#format}).
+     * @param args The list of arguments passed to the formatter. If there are more arguments than
+     *             required by {@code format}, additional arguments are ignored.
+     *
+     * @throws NullPointerException if {@code format == null}.
+     * @throws java.util.IllegalFormatException if the format is invalid.
+     * */
+    public static int w(String tag, String format, Object... args) {
+        return LogCat.println(WARN, tag, format, args);
+    }
 
     /**
      * Send a {@link #WARN} log message and log the exception.
@@ -409,6 +473,22 @@ public final class LogCat {
     public static int e(String tag, String msg) { return LogCat.println(ERROR, tag, msg); }
 
     /**
+     * Send a {@link #ERROR} log message.
+     *
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param format The format string (see {@link java.util.Formatter#format}).
+     * @param args The list of arguments passed to the formatter. If there are more arguments than
+     *             required by {@code format}, additional arguments are ignored.
+     *
+     * @throws NullPointerException if {@code format == null}.
+     * @throws java.util.IllegalFormatException if the format is invalid.
+     * */
+    public static int e(String tag, String format, Object... args) {
+        return LogCat.println(ERROR, tag, format, args);
+    }
+
+    /**
      * Send a {@link #ERROR} log message and log the exception.
      *
      * @param msg The message you would like logged.
@@ -447,6 +527,30 @@ public final class LogCat {
         if (LogCat.isLoggable(priority)) {
             final String m = (!isTagEmpty(tag)) ? tag + TAG_DELIMITER + msg : msg;
             return android.util.Log.println(priority, sAppTag, m);
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+     * Low-level logging call.
+     *
+     * @param priority The priority/type of this log message.
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param format The format string (see {@link java.util.Formatter#format}).
+     * @param args The list of arguments passed to the formatter. If there are more arguments than
+     *             required by {@code format}, additional arguments are ignored.
+     * @return The number of bytes written.
+     * @throws NullPointerException if {@code format == null}.
+     * @throws java.util.IllegalFormatException if the format is invalid.
+     * */
+    @SuppressLint("LogTagMismatch")
+    private static int println(int priority, String tag, String format, Object... args) {
+        // This is a double check, but it is faster than String.format()
+        if (LogCat.isLoggable(priority)) {
+            final String msg = String.format(format, args);
+            return LogCat.println(priority, tag, msg);
         } else {
             return -1;
         }
