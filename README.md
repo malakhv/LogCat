@@ -43,7 +43,7 @@ and place that in /data/local.prop.
 LogCat.init(APP_TAG, BuildConfig.DEBUG);
 ```
 
-### StactTrace
+### StackTrace
 You could use `LogCat` class for printing a stack trace. The stack trace information printed as usual app log, and you could specify `tag` and `priority`.
 
 ### License
