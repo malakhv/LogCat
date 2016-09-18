@@ -27,7 +27,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     /**
      * Called when a view has been clicked.
-     *
      * @param v The view that was clicked.
      */
     @Override
@@ -36,22 +35,27 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         if (id == R.id.btn_e) {
             LogCat.e(TAG, "Log level - ERROR");
+            LogCat.printStackTrace(LogCat.ERROR);
         }
 
         if (id == R.id.btn_w) {
             LogCat.w(TAG, "Log level - WARN");
+            LogCat.printStackTrace(LogCat.WARN);
         }
 
         if (id == R.id.btn_i) {
             LogCat.i(TAG, "Log level - INFO");
+            LogCat.printStackTrace(LogCat.INFO);
         }
 
         if (id == R.id.btn_d) {
-            if (LogCat.isDebug()) LogCat.d(TAG, "Log level - DEBUG");
+            LogCat.d(TAG, "Log level - DEBUG");
+            LogCat.printStackTrace(LogCat.DEBUG);
         }
 
         if (id == R.id.btn_v) {
             LogCat.v(TAG, "Log level - VERBOSE");
+            LogCat.printStackTrace(LogCat.VERBOSE);
         }
 
     }

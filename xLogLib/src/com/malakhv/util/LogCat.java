@@ -81,6 +81,10 @@ import android.text.TextUtils;
  * <br>&nbsp;<br>
  * </p>
  *
+ * <p><b>Tip:</b>You could use this class for printing a stack trace. The stack trace information
+ * printed as usual app log, and you could specify tag and priority. For more details, please, see
+ * {@link #printStackTrace(String, int, Thread)}</p>
+ *
  * @author Mikhail.Malakhov [malakhv@live.ru|https://github.com/malakhv]
  *
  * @see android.util.Log
@@ -506,6 +510,65 @@ public final class LogCat {
      * */
     public static int e(String tag, String msg, Throwable tr) {
         return LogCat.println(ERROR, tag, msg, tr);
+    }
+
+    /*----------------------------------------------------------------------------------------*/
+    /* Stacktrace
+    /*----------------------------------------------------------------------------------------*/
+
+    /**
+     * Send a {@link #DEBUG} log message that contains a printable representation of this
+     * {@link Thread}'s stack trace.
+     * */
+    public static void printStackTrace() {
+        printStackTrace(null, DEBUG, Thread.currentThread());
+    }
+
+    /**
+     * Send a log message that contains a printable representation of this {@link Thread}'s
+     * stack trace.
+     * @param priority The priority/type of this log message.
+     * */
+    public static void printStackTrace(int priority) {
+        printStackTrace(null, priority, Thread.currentThread());
+    }
+
+    /**
+     * Send a log message that contains a printable representation of this {@link Thread}'s
+     * stack trace.
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param priority The priority/type of this log message.
+     * */
+    public static void printStackTrace(String tag, int priority) {
+        printStackTrace(tag, priority, Thread.currentThread());
+    }
+
+    /**
+     * Send a log message that contains a printable representation of specified {@link Thread}'s
+     * stack trace.
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param priority The priority/type of this log message.
+     * @param thread The {@link Thread}, for which a stack trace will be sent.
+     * */
+    public static void printStackTrace(String tag, int priority, Thread thread) {
+        checkInit();
+        if (thread == null) {
+            LogCat.w("Cannot print stack trace for thread - thread is null"); return;
+        }
+        final String NEW_LINE = "\n";
+        StackTraceElement[] elements = thread.getStackTrace();
+        final StringBuilder builder = new StringBuilder(elements.length * 2);
+        //TODO Could we remove from output following elements?:
+        //TODO  - dalvik.system.VMStack.getThreadStackTrace(Native Method)
+        //TODO  - java.lang.Thread.getStackTrace(Thread.java:580)
+        //TODO  - com.malakhv.util.LogCat.printStackTrace(LogCat.java:534)
+        //TODO  - com.malakhv.util.LogCat.printStackTrace(LogCat.java:520)
+        for (StackTraceElement element: elements) {
+            builder.append(element.toString()).append(NEW_LINE);
+        }
+        LogCat.println(priority, tag, builder.toString());
     }
 
     /*----------------------------------------------------------------------------------------*/
