@@ -517,7 +517,7 @@ public final class LogCat {
     /*----------------------------------------------------------------------------------------*/
 
     /**
-     * Send a {@link #DEBUG} log message that contains a printable representation of this
+     * Send a {@link #DEBUG} log message that contains a printable representation of current
      * {@link Thread}'s stack trace.
      * */
     public static void printStackTrace() {
@@ -525,7 +525,7 @@ public final class LogCat {
     }
 
     /**
-     * Send a log message that contains a printable representation of this {@link Thread}'s
+     * Send a log message that contains a printable representation of current {@link Thread}'s
      * stack trace.
      * @param priority The priority/type of this log message.
      * */
@@ -534,7 +534,7 @@ public final class LogCat {
     }
 
     /**
-     * Send a log message that contains a printable representation of this {@link Thread}'s
+     * Send a log message that contains a printable representation of current {@link Thread}'s
      * stack trace.
      * @param tag Used to identify the source of a log message. It usually identifies the class or
      *            activity where the log call occurs. Maybe {@code null}.
@@ -567,6 +567,59 @@ public final class LogCat {
         //TODO  - com.malakhv.util.LogCat.printStackTrace(LogCat.java:520)
         for (StackTraceElement element: elements) {
             builder.append(element.toString()).append(NEW_LINE);
+        }
+        LogCat.println(priority, tag, builder.toString());
+    }
+
+    /*----------------------------------------------------------------------------------------*/
+    /* Threads
+    /*----------------------------------------------------------------------------------------*/
+
+    /**
+     * Send a {@link #DEBUG} log message that contains information (name, priority, group) about
+     * all active threads in current {@link ThreadGroup}.
+     * */
+    public static void printThreads() {
+        printThreads(null, DEBUG, Thread.currentThread().getThreadGroup());
+    }
+
+    /**
+     * Send a log message that contains information (name, priority, group) about all active
+     * threads in current {@link ThreadGroup}.
+     * @param priority The priority/type of this log message.
+     * */
+    public static void printThreads(int priority) {
+        printThreads(null, priority, Thread.currentThread().getThreadGroup());
+    }
+
+    /**
+     * Send a log message that contains information (name, priority, group) about all active
+     * threads in current {@link ThreadGroup}.
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param priority The priority/type of this log message.
+     * */
+    public static void printThreads(String tag, int priority) {
+        printThreads(tag, priority, Thread.currentThread().getThreadGroup());
+    }
+
+    /**
+     * Send a log message that contains information (name, priority, group) about all active
+     * threads in specified {@link ThreadGroup}.
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param priority The priority/type of this log message.
+     * @param group The group of threads.
+     * */
+    public static void printThreads(String tag, int priority, ThreadGroup group) {
+        final String NEW_LINE = "\n";
+        int count = group.activeCount();
+        final Thread[] threads = new Thread[count];
+        int copied = group.enumerate(threads, true);
+        final StringBuilder builder = new StringBuilder(copied * 2);
+        builder.append(NEW_LINE);
+        for (int i = 0; i < copied; i++) {
+            builder.append(threads[i].toString()).append(NEW_LINE);
         }
         LogCat.println(priority, tag, builder.toString());
     }

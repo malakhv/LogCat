@@ -36,27 +36,50 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (id == R.id.btn_e) {
             LogCat.e(TAG, "Log level - ERROR");
             LogCat.printStackTrace(LogCat.ERROR);
+            LogCat.printThreads(LogCat.ERROR);
         }
 
         if (id == R.id.btn_w) {
             LogCat.w(TAG, "Log level - WARN");
             LogCat.printStackTrace(LogCat.WARN);
+            LogCat.printThreads(LogCat.WARN);
         }
 
         if (id == R.id.btn_i) {
             LogCat.i(TAG, "Log level - INFO");
             LogCat.printStackTrace(LogCat.INFO);
+            LogCat.printThreads(LogCat.INFO);
         }
 
         if (id == R.id.btn_d) {
             LogCat.d(TAG, "Log level - DEBUG");
             LogCat.printStackTrace(LogCat.DEBUG);
+            LogCat.printThreads(LogCat.DEBUG);
         }
 
         if (id == R.id.btn_v) {
             LogCat.v(TAG, "Log level - VERBOSE");
             LogCat.printStackTrace(LogCat.VERBOSE);
+            makeThreads(7);
+            LogCat.printThreads(TAG, LogCat.VERBOSE);
         }
 
     }
+
+    /** Make empty threads */
+    private void makeThreads(int count) {
+        for (int i = 0; i < count; i++) {
+            new Thread(mEmptyRunnable,"TEST - " + i).start();
+        }
+    }
+
+    /** Empty runnable */
+    private Runnable mEmptyRunnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(35 * 1000);
+            } catch (InterruptedException e) {}
+        }
+    };
 }
