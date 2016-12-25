@@ -11,12 +11,12 @@ apply from: 'library.gradle'
 
 android {
 
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         minSdkVersion 1
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode = "${ARTIFACT_VERSION_CODE}"
         versionName "${ARTIFACT_VERSION_NAME}"
     }
