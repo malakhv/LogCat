@@ -19,6 +19,7 @@ android {
         targetSdkVersion 25
         versionCode = "${ARTIFACT_VERSION_CODE}"
         versionName "${ARTIFACT_VERSION_NAME}"
+        ndk { abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a' }
     }
 
     // Source sets, build types and tests
@@ -28,6 +29,7 @@ android {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src']
+            jni.srcDirs = ['cpp']
             resources.srcDirs = ['src']
             aidl.srcDirs = ['src']
             renderscript.srcDirs = ['src']
@@ -62,6 +64,11 @@ android {
     }
     lintOptions {  abortOnError false  }
 
+    externalNativeBuild {
+        cmake {
+            path 'cpp/CMakeLists.txt'
+        }
+    }
 }
 
 // All library dependencies

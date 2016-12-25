@@ -37,24 +37,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
             LogCat.e(TAG, "Log level - ERROR");
             LogCat.printStackTrace(LogCat.ERROR);
             LogCat.printThreads(LogCat.ERROR);
+            LogCat.printMemoryInfo(LogCat.ERROR);
         }
 
         if (id == R.id.btn_w) {
             LogCat.w(TAG, "Log level - WARN");
             LogCat.printStackTrace(LogCat.WARN);
             LogCat.printThreads(LogCat.WARN);
+            LogCat.printMemoryInfo(LogCat.WARN);
         }
 
         if (id == R.id.btn_i) {
             LogCat.i(TAG, "Log level - INFO");
             LogCat.printStackTrace(LogCat.INFO);
             LogCat.printThreads(LogCat.INFO);
+            LogCat.printMemoryInfo(LogCat.INFO);
         }
 
         if (id == R.id.btn_d) {
             LogCat.d(TAG, "Log level - DEBUG");
             LogCat.printStackTrace(LogCat.DEBUG);
             LogCat.printThreads(LogCat.DEBUG);
+            LogCat.printMemoryInfo(LogCat.DEBUG);
         }
 
         if (id == R.id.btn_v) {
@@ -62,6 +66,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             LogCat.printStackTrace(LogCat.VERBOSE);
             makeThreads(7);
             LogCat.printThreads(TAG, LogCat.VERBOSE);
+            LogCat.printMemoryInfo(LogCat.VERBOSE);
         }
 
     }

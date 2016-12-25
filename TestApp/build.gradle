@@ -22,6 +22,6 @@ android {
 }
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.malakhv.libs:logcat:1.0.0'
-    //compile project (':xLogLib')
+    //compile 'com.malakhv.libs:logcat:1.0.0'
+    compile project (':xLogLib')
 }
