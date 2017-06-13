@@ -1,8 +1,8 @@
 # xLogCat
-The library project includes classes for writing an app log in Android. Is essentially a wrapper for the standard Android [Log](https://developer.android.com/reference/android/util/Log.html) class. The main difference is the availability check on the current level logs while trying to log. Also, there is a possibility to change the log level for the application at runtime via adb.
+The library project includes classes for writing an app logs in Android. Is essentially a wrapper for the standard Android [Log](https://developer.android.com/reference/android/util/Log.html) class. The main difference is the automatically check the current log's level while trying to write logs. Also, there is a possibility to change the log level for the application at runtime via adb.
 
 ### LogCat class
-This class extends standard Android API for sending a log output. This class allows you to create log messages (similarly `android.util.Log` class). Generally, you should use the following `LogCat` methods, listed in order from the highest to lowest priority (or, least to most verbose):
+This class extends standard Android API for sending a log output. It allows you to create log messages (similarly `android.util.Log` class). Generally, you should use the following `LogCat` methods, listed in order from the highest to lowest priority (or, least to most verbose):
 * `LogCat.e()` (ERROR)
 * `LogCat.w()` (WARN)
 * `LogCat.i()` (INFO)
@@ -11,7 +11,7 @@ This class extends standard Android API for sending a log output. This class all
 
 You should never compile `VERBOSE` logs into your app, except during development. `DEBUG` logs are compiled in but stripped at runtime, while `ERROR`, `WARN` and `INFO` logs are always kept.
 
-Before using this class for write logs, you should initialize it and specify the main log tag for your app (further `APP_TAG`). This tag will be used into all methods for print logs as unique log tag. This is the one of main difference between the class `LogCat` and Android `android.util.Log`.
+Before using this class for writing logs, you should initialize it and specify the main log tag for your app (further `APP_TAG`). This tag will be used into all methods for print logs as unique log tag. This is the one of main difference between the class `LogCat` and Android `android.util.Log`.
 
 __Tip:__ A good conventions are to use the app name as the main log tag and to declare an appropriate constant for this tag in your app class, for example:
 ```Java
