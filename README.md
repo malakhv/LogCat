@@ -49,6 +49,9 @@ You could use `LogCat` class for printing information about active threads. This
 ### StackTrace
 You could use `LogCat` class for printing a stack trace. The stack trace information printed as usual app log, and you could specify `tag` and `priority`.
 
+### MemoryInfo
+You could use `LogCat` class for printing information about memory usage. The information printed as usual app log, and you could specify `tag` and `priority`.
+
 ### License
 ```Text
 Copyright (C) 2013 Mikhail Malakhov <malakhv@live.ru>
