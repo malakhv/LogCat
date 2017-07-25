@@ -6,7 +6,8 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        maven { url "file://${rootDir}/artifacts/logcat" }
+        //maven { url "file://${rootDir}/artifacts/logcat" }
+        maven { url "file://${rootDir}/../zMaven" }
     }
 }
 task clean(type: Delete) { delete rootProject.buildDir }
