@@ -9,6 +9,8 @@ import com.malakhv.util.LogCat;
 public class MainActivity extends Activity implements View.OnClickListener {
     private final static String TAG = "LogTest";
 
+    private LogCat.Obfuscator mObfuscator = null;
+
     /**
      * setprop log.tag.xLogLib ERROR
      * setprop log.tag.xLogLib INFO
@@ -23,6 +25,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mObfuscator = new LogCat.Obfuscator() {
+            @Override
+            public String obfuscate(String msg) {
+                return msg;
+            }
+        };
     }
 
     /**
@@ -55,10 +63,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
         if (id == R.id.btn_d) {
-            LogCat.d(TAG, "Log level - DEBUG");
-            LogCat.printStackTrace(LogCat.DEBUG);
-            LogCat.printThreads(LogCat.DEBUG);
-            LogCat.printMemoryInfo(LogCat.DEBUG);
+            LogCat.d(TAG, "Log level - DEBUG", true);
+            LogCat.setObfuscator(mObfuscator);
+            LogCat.d(TAG, "Log level - DEBUG", true);
+            //LogCat.printStackTrace(LogCat.DEBUG);
+            //LogCat.printThreads(LogCat.DEBUG);
+            //LogCat.printMemoryInfo(LogCat.DEBUG);
         }
 
         if (id == R.id.btn_v) {

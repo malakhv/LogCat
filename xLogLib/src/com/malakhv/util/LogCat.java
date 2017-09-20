@@ -306,6 +306,7 @@ public final class LogCat {
      * @param msg The message you would like logged.
      * */
     public static int d(String tag, String msg) { return LogCat.println(DEBUG, tag, msg); }
+    public static int d(String tag, String msg, boolean obfuscate) { return LogCat.println(DEBUG, tag, msg, obfuscate); }
 
     /**
      * Send a {@link #DEBUG} log message.
@@ -644,6 +645,50 @@ public final class LogCat {
     }
 
     /*----------------------------------------------------------------------------------------*/
+    /* Obfuscator
+    /*----------------------------------------------------------------------------------------*/
+
+    /** The default simple obfuscator. */
+    public static final Obfuscator SIMPLE_OBFUSCATOR = new Obfuscator() {
+        @Override
+        public String obfuscate(String msg) {
+            if (TextUtils.isEmpty(msg)) return msg;
+            char c[] = msg.toCharArray();
+            for (int i = 0; i < c.length; i +=3) {
+                c[i] = '*';
+            }
+            return new String(c);
+        }
+    };
+
+    /** The current message obfuscator. */
+    private static Obfuscator sObfuscator = SIMPLE_OBFUSCATOR;
+
+    /**
+     * Set the new message obfuscator.
+     * */
+    public static void setObfuscator(Obfuscator obfuscator) { sObfuscator = obfuscator; }
+
+    /**
+     * @return Obfuscated message for logging.
+     * */
+    private static String obfuscate(String msg) {
+        return sObfuscator != null ? sObfuscator.obfuscate(msg) : msg;
+    }
+
+    /**
+     * Interface definition for a method to be invoked when a message a message should be
+     * obfuscated.
+     * */
+    public static interface Obfuscator {
+
+        /**
+         * Obfuscate message.
+         * */
+        String obfuscate(String msg);
+    }
+
+    /*----------------------------------------------------------------------------------------*/
     /* Low-level logging calls
     /*----------------------------------------------------------------------------------------*/
 
@@ -660,6 +705,27 @@ public final class LogCat {
     private static int println(int priority, String tag, String msg) {
         checkInit();
         if (LogCat.isLoggable(priority)) {
+            final String m = (!isTagEmpty(tag)) ? tag + TAG_DELIMITER + msg : msg;
+            return android.util.Log.println(priority, sAppTag, m);
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+     * Low-level logging call.
+     *
+     * @param priority The priority/type of this log message.
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param msg The message you would like logged.
+     * @return The number of bytes written.
+     * */
+    @SuppressLint("LogTagMismatch")
+    private static int println(int priority, String tag, String msg, boolean obfuscate) {
+        checkInit();
+        if (LogCat.isLoggable(priority)) {
+            if (obfuscate) msg = obfuscate(msg);
             final String m = (!isTagEmpty(tag)) ? tag + TAG_DELIMITER + msg : msg;
             return android.util.Log.println(priority, sAppTag, m);
         } else {
@@ -717,4 +783,5 @@ public final class LogCat {
     static {
         System.loadLibrary("logcat-native-lib");
     }
+
 }
