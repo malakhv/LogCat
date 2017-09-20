@@ -1,4 +1,4 @@
-/**
+/* *
  * Copyright (C) 2013 Mikhail Malakhov <malakhv@live.ru>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -90,7 +90,7 @@ import android.text.TextUtils;
  * @see android.util.Log
  * @see LogCat#init(String)
  * */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class LogCat {
 
     /** Tag for LogCat. */
@@ -173,16 +173,16 @@ public final class LogCat {
      * @throws IllegalArgumentException If the appTag is null or empty, or the appTag.length() > 23.
      * */
     public static void init(String tag, boolean debug) {
+        sAppTag = tag != null ? tag.trim() : null;
         // Check initial tag is null or empty
-        if (isTagEmpty(tag)) {
+        if (TextUtils.isEmpty(sAppTag)) {
             throw new IllegalArgumentException(LOG_TAG + TAG_DELIMITER +
                     "The tag is null or empty");
         }
         // Check initial tag is not very long
-        if (tag.length() > TAG_MAX_LENGTH) {
+        if (sAppTag.length() > TAG_MAX_LENGTH) {
             throw new IllegalArgumentException(LOG_TAG + TAG_DELIMITER + "The tag is too long");
         }
-        sAppTag = tag.trim();
         sDebug = debug;
         sWasInit = true;
         LogCat.d(LOG_TAG, "Init with app tag - " + sAppTag);
@@ -226,6 +226,12 @@ public final class LogCat {
      * {@link LogCat} is {@code true}.
      * */
     public static boolean isDebug() { return isLoggable(DEBUG); }
+
+    /**
+     * Returns {@code true} if log level for tag is {@link LogCat#INFO} or debug flag in
+     * {@link LogCat} is {@code true}.
+     * */
+    public static boolean isInfo() { return isLoggable(INFO); }
 
     /*----------------------------------------------------------------------------------------*/
     /* Log level - VERBOSE
@@ -687,6 +693,7 @@ public final class LogCat {
 
     /**
      * Low-level logging call.
+     *
      * @param priority The priority/type of this log message.
      * @param tag Used to identify the source of a log message.  It usually identifies the class or
      *            activity where the log call occurs. Maybe {@code null}.
@@ -706,7 +713,7 @@ public final class LogCat {
     /** Send a log message that contains information about memory usage. */
     private static native void printMemoryInfo_native(String tag, int priority);
 
-    /** Load a native library */
+    /* Load a native library */
     static {
         System.loadLibrary("logcat-native-lib");
     }

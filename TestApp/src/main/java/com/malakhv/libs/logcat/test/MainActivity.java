@@ -16,7 +16,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
      * setprop log.tag.xLogLib VERBOSE
      * */
     static {
-        LogCat.init("xLogLib", BuildConfig.DEBUG);
+        LogCat.init("  xLogLib ", BuildConfig.DEBUG);
     }
 
     @Override
