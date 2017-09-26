@@ -85,10 +85,16 @@ import android.text.TextUtils;
  * printed as usual app log, and you could specify tag and priority. For more details, please, see
  * {@link #printStackTrace(String, int, Thread)}</p>
  *
+ * <p><b>Log Obfuscation</b><br>If you want to obfuscate your log message, you could use
+ * {@link LogObfuscator} interface for it. For more details, please see: {@link LogObfuscator},
+ * {@link LogCat#setObfuscator(LogObfuscator)}, {@link LogCat#setObfuscateByDefault(boolean)},
+ * {@link LogCat#SIMPLE_NUMBER_OBFUSCATOR}.</p>
+ *
  * @author Mikhail.Malakhov [malakhv@live.ru|https://github.com/malakhv]
  *
  * @see android.util.Log
  * @see LogCat#init(String)
+ * @see LogCat.LogObfuscator
  * */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class LogCat {
@@ -305,8 +311,19 @@ public final class LogCat {
      *            activity where the log call occurs. Maybe {@code null}.
      * @param msg The message you would like logged.
      * */
-    public static int d(String tag, String msg) { return LogCat.println(DEBUG, tag, msg); }
-    public static int d(String tag, String msg, boolean obfuscate) { return LogCat.println(DEBUG, tag, msg, obfuscate); }
+    public static int d(String tag, String msg) { return LogCat.d(tag, msg, sObfuscateByDefault); }
+
+    /**
+     * Send a {@link #DEBUG} log message.
+     *
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param msg The message you would like logged.
+     * @param obfuscate True, if you want to obfuscate log message.
+     * */
+    public static int d(String tag, String msg, boolean obfuscate) {
+        return LogCat.println(DEBUG, tag, msg, obfuscate);
+    }
 
     /**
      * Send a {@link #DEBUG} log message.
@@ -575,7 +592,7 @@ public final class LogCat {
         for (StackTraceElement element: elements) {
             builder.append(element.toString()).append(NEW_LINE);
         }
-        LogCat.println(priority, tag, builder.toString());
+        LogCat.println(priority, tag, builder.toString(), false);
     }
 
     /*----------------------------------------------------------------------------------------*/
@@ -628,7 +645,7 @@ public final class LogCat {
         for (int i = 0; i < copied; i++) {
             builder.append(threads[i].toString()).append(NEW_LINE);
         }
-        LogCat.println(priority, tag, builder.toString());
+        LogCat.println(priority, tag, builder.toString(), false);
     }
 
     /*----------------------------------------------------------------------------------------*/
@@ -645,29 +662,40 @@ public final class LogCat {
     }
 
     /*----------------------------------------------------------------------------------------*/
-    /* Obfuscator
+    /* Log Obfuscator
     /*----------------------------------------------------------------------------------------*/
 
-    /** The default simple obfuscator. */
-    public static final Obfuscator SIMPLE_OBFUSCATOR = new Obfuscator() {
+    /** The behavior of obfuscation by default. */
+    private static boolean sObfuscateByDefault = false;
+
+    /** @return True, if log messages will obfuscate by default. */
+    public static boolean isObfuscateByDefault() { return sObfuscateByDefault; }
+
+    /**
+     * Set the default behaviour for log obfuscator.
+     * @param obfuscate True, if you want to obfuscate log messages by default.
+     * */
+    public static void setObfuscateByDefault(boolean obfuscate) { sObfuscateByDefault = obfuscate; }
+
+    /**
+     * The default simple number obfuscator. You could use it for obfuscate all numbers (like
+     * phone number, for example) in your log messages.
+     * */
+    public static final LogObfuscator SIMPLE_NUMBER_OBFUSCATOR = new LogObfuscator() {
         @Override
         public String obfuscate(String msg) {
             if (TextUtils.isEmpty(msg)) return msg;
-            char c[] = msg.toCharArray();
-            for (int i = 0; i < c.length; i +=3) {
-                c[i] = '*';
-            }
-            return new String(c);
+            return msg.replaceAll("[0-9]","*");
         }
     };
 
-    /** The current message obfuscator. */
-    private static Obfuscator sObfuscator = SIMPLE_OBFUSCATOR;
+    /** The current obfuscator for log messages. */
+    private static LogObfuscator sObfuscator = SIMPLE_NUMBER_OBFUSCATOR;
 
     /**
-     * Set the new message obfuscator.
+     * Set the new obfuscator for log messages.
      * */
-    public static void setObfuscator(Obfuscator obfuscator) { sObfuscator = obfuscator; }
+    public static void setObfuscator(LogObfuscator obfuscator) { sObfuscator = obfuscator; }
 
     /**
      * @return Obfuscated message for logging.
@@ -677,10 +705,11 @@ public final class LogCat {
     }
 
     /**
-     * Interface definition for a method to be invoked when a message a message should be
-     * obfuscated.
+     * Interface definition for a method to be invoked when a message should be obfuscated.
+     * @see LogCat#setObfuscator(LogObfuscator)
+     * @see LogCat#SIMPLE_NUMBER_OBFUSCATOR
      * */
-    public static interface Obfuscator {
+    public static interface LogObfuscator {
 
         /**
          * Obfuscate message.
@@ -703,13 +732,7 @@ public final class LogCat {
      * */
     @SuppressLint("LogTagMismatch")
     private static int println(int priority, String tag, String msg) {
-        checkInit();
-        if (LogCat.isLoggable(priority)) {
-            final String m = (!isTagEmpty(tag)) ? tag + TAG_DELIMITER + msg : msg;
-            return android.util.Log.println(priority, sAppTag, m);
-        } else {
-            return -1;
-        }
+       return println(priority, tag, msg, sObfuscateByDefault);
     }
 
     /**
@@ -719,6 +742,7 @@ public final class LogCat {
      * @param tag Used to identify the source of a log message. It usually identifies the class or
      *            activity where the log call occurs. Maybe {@code null}.
      * @param msg The message you would like logged.
+     * @param obfuscate True, if you want to obfuscate log message.
      * @return The number of bytes written.
      * */
     @SuppressLint("LogTagMismatch")
@@ -748,10 +772,30 @@ public final class LogCat {
      * */
     @SuppressLint("LogTagMismatch")
     private static int println(int priority, String tag, String format, Object... args) {
+        return println(priority, tag, sObfuscateByDefault, format, args);
+    }
+
+    /**
+     * Low-level logging call.
+     *
+     * @param priority The priority/type of this log message.
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param obfuscate True, if you want to obfuscate log message.
+     * @param format The format string (see {@link java.util.Formatter#format}).
+     * @param args The list of arguments passed to the formatter. If there are more arguments than
+     *             required by {@code format}, additional arguments are ignored.
+     * @return The number of bytes written.
+     * @throws NullPointerException if {@code format == null}.
+     * @throws java.util.IllegalFormatException if the format is invalid.
+     * */
+    @SuppressLint("LogTagMismatch")
+    private static int println(int priority, String tag, boolean obfuscate, String format,
+            Object... args) {
         // This is a double check, but it is faster than String.format()
         if (LogCat.isLoggable(priority)) {
             final String msg = String.format(format, args);
-            return LogCat.println(priority, tag, msg);
+            return LogCat.println(priority, tag, msg, obfuscate);
         } else {
             return -1;
         }
@@ -768,8 +812,24 @@ public final class LogCat {
      * @return The number of bytes written.
      * */
     private static int println(int priority, String tag, String msg, Throwable tr) {
+        return println(priority, tag, msg, tr, sObfuscateByDefault);
+    }
+
+    /**
+     * Low-level logging call.
+     *
+     * @param priority The priority/type of this log message.
+     * @param tag Used to identify the source of a log message.  It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param msg The message you would like logged.
+     * @param tr An exception to log.
+     * @param obfuscate True, if you want to obfuscate log message.
+     * @return The number of bytes written.
+     * */
+    private static int println(int priority, String tag, String msg, Throwable tr,
+            boolean obfuscate) {
         return LogCat.println(priority, tag, msg + "\n" +
-                android.util.Log.getStackTraceString(tr));
+                android.util.Log.getStackTraceString(tr), obfuscate);
     }
 
     /*----------------------------------------------------------------------------------------*/
