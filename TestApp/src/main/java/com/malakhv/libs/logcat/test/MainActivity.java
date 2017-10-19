@@ -9,6 +9,8 @@ import com.malakhv.util.LogCat;
 public class MainActivity extends Activity implements View.OnClickListener {
     private final static String TAG = "LogTest";
 
+    private LogCat.LogObfuscator mObfuscator = null;
+
     /**
      * setprop log.tag.xLogLib ERROR
      * setprop log.tag.xLogLib INFO
@@ -23,6 +25,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mObfuscator = new LogCat.LogObfuscator() {
+            @Override
+            public String obfuscate(String msg) {
+                return msg;
+            }
+        };
     }
 
     /**
@@ -55,10 +63,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
         if (id == R.id.btn_d) {
-            LogCat.d(TAG, "Log level - DEBUG");
-            LogCat.printStackTrace(LogCat.DEBUG);
-            LogCat.printThreads(LogCat.DEBUG);
-            LogCat.printMemoryInfo(LogCat.DEBUG);
+            LogCat.d(TAG, "Log level - DEBUG", true);
+
+            final String message = "Ivanov: +71234567890";
+            LogCat.d(TAG, message); // 0 - not obfuscated
+            LogCat.d(TAG, message, true); // 1 - obfuscated
+            LogCat.setObfuscator(mObfuscator); // Empty obfuscator
+            LogCat.d(TAG, message); // 0 - Empty obfuscator
+            LogCat.d(TAG, message, true); // 0 - Empty obfuscator
+
+            LogCat.d(TAG, "===============");
+            LogCat.setObfuscator(LogCat.SIMPLE_NUMBER_OBFUSCATOR);
+            LogCat.setObfuscateByDefault(true);
+
+            LogCat.d(TAG, message); // 1 - by default
+            LogCat.d(TAG, message, false); // 0
+            LogCat.setObfuscator(mObfuscator); // Empty obfuscator
+            LogCat.d(TAG, message); // 0 - Empty obfuscator
+            LogCat.d(TAG, message, false); // 0 - Empty obfuscator
         }
 
         if (id == R.id.btn_v) {
