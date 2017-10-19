@@ -17,6 +17,8 @@
 package com.malakhv.util;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 /**
@@ -90,6 +92,9 @@ import android.text.TextUtils;
  * {@link LogCat#setObfuscator(LogObfuscator)}, {@link LogCat#setObfuscateByDefault(boolean)},
  * {@link LogCat#SIMPLE_NUMBER_OBFUSCATOR}.</p>
  *
+ * <p><b>Objects dump</b><br>You could use this class for printing extended information about some
+ * objects likes {@link Intent}. For more details, please, see {@link #dump(Object)} functions.</p>
+ *
  * @author Mikhail.Malakhov [malakhv@live.ru|https://github.com/malakhv]
  *
  * @see android.util.Log
@@ -111,6 +116,15 @@ public final class LogCat {
 
     /** The maximum length of tag. */
     private static final int TAG_MAX_LENGTH = 23;
+
+    /** The "null" string. This string used in log messages when an object is {@code null}. */
+    private static final String NULL = "null";
+
+    /** The new line char. */
+    private static final String LINE = "\n";
+
+    /** The default indent in log message. */
+    private static final String INDENT = "    ";
 
     /*----------------------------------------------------------------------------------------*/
     /* Grabbing the native values from Android's native logging facilities,
@@ -631,7 +645,6 @@ public final class LogCat {
         if (thread == null) {
             LogCat.w("Cannot print stack trace for thread - thread is null"); return;
         }
-        final String NEW_LINE = "\n";
         StackTraceElement[] elements = thread.getStackTrace();
         final StringBuilder builder = new StringBuilder(elements.length * 2);
         //TODO Could we remove from output following elements?:
@@ -640,7 +653,7 @@ public final class LogCat {
         //TODO  - com.malakhv.util.LogCat.printStackTrace(LogCat.java:534)
         //TODO  - com.malakhv.util.LogCat.printStackTrace(LogCat.java:520)
         for (StackTraceElement element: elements) {
-            builder.append(element.toString()).append(NEW_LINE);
+            builder.append(element.toString()).append(LINE);
         }
         LogCat.println(priority, tag, builder.toString(), false);
     }
@@ -686,14 +699,13 @@ public final class LogCat {
      * @param group The group of threads.
      * */
     public static void printThreads(String tag, int priority, ThreadGroup group) {
-        final String NEW_LINE = "\n";
         int count = group.activeCount();
         final Thread[] threads = new Thread[count];
         int copied = group.enumerate(threads, true);
         final StringBuilder builder = new StringBuilder(copied * 2);
-        builder.append(NEW_LINE);
+        builder.append(LINE);
         for (int i = 0; i < copied; i++) {
-            builder.append(threads[i].toString()).append(NEW_LINE);
+            builder.append(threads[i].toString()).append(LINE);
         }
         LogCat.println(priority, tag, builder.toString(), false);
     }
@@ -774,6 +786,73 @@ public final class LogCat {
          * Obfuscate message.
          * */
         String obfuscate(String msg);
+    }
+
+    /*----------------------------------------------------------------------------------------*/
+    /* Objects dump
+    /*----------------------------------------------------------------------------------------*/
+
+    /**
+     * Send a {@link #DEBUG} log message that contains information about {@code o}.
+     *
+     * @param o The destination object.
+     * */
+    public static void dump(Object o) {
+        dump(null, DEBUG, o);
+    }
+
+    /**
+     * Send a {@link #DEBUG} log message that contains information about {@code o}.
+     *
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param o The destination object.
+     * */
+    public static void dump(String tag, Object o) {
+        dump(tag, DEBUG, o);
+    }
+
+    /**
+     * Send a log message that contains information about {@code o}.
+     *
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param priority The priority/type of this log message.
+     * @param o The destination object.
+     * */
+    public static void dump(String tag, int priority, Object o) {
+        final String msg = o != null ? o.toString() : NULL;
+        println(priority, tag, msg, false);
+    }
+
+    /**
+     * Send a {@link #DEBUG} log message that contains information about {@link Intent}.
+     *
+     * @param intent The destination intent.
+     * */
+    public static void dump(Intent intent) {
+        dump(null, DEBUG, intent);
+    }
+
+    /**
+     * Send a log message that contains information about {@link Intent}.
+     *
+     * @param tag Used to identify the source of a log message. It usually identifies the class or
+     *            activity where the log call occurs. Maybe {@code null}.
+     * @param priority The priority/type of this log message.
+     * @param intent The destination intent.
+     * */
+    public static void dump(String tag, int priority, Intent intent) {
+        if (intent == null) {
+            println(priority, tag, "Intent in null", false); return;
+        }
+        final StringBuilder sBuilder = new StringBuilder();
+        sBuilder.append(intent.toString());
+        final Bundle extras = intent.getExtras();
+        if (extras != null) {
+            sBuilder.append(LINE).append(INDENT).append(extras.toString());
+        }
+        println(priority, tag, sBuilder.toString(), false);
     }
 
     /*----------------------------------------------------------------------------------------*/
