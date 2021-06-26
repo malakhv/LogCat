@@ -73,7 +73,7 @@ task zipRelease(type: Zip) {
     archiveName "${artifact.name}-${artifact.version}.zip"
 }
 
-task makeArtifact << {
+task makeArtifact  {
     println "----------------------------------------------------------------------------------"
     println "Artifact make complete successfully!"
     println "Name: ${artifact.name}"

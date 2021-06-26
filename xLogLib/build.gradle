@@ -11,15 +11,15 @@ apply from: 'library.gradle'
 
 android {
 
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 1
-        targetSdkVersion 25
+        targetSdkVersion 30
         versionCode = "${ARTIFACT_VERSION_CODE}"
         versionName "${ARTIFACT_VERSION_NAME}"
-        ndk { abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a' }
+        ndk {abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64' }
     }
 
     // Source sets, build types and tests
@@ -36,9 +36,6 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
-
-        // Move the tests to tests/java, tests/res, etc...
-        instrumentTest.setRoot('tests')
 
         // Move the build types to types/<type>
         // For instance, types/debug/java, types/debug/AndroidManifest.xml, ...
@@ -73,5 +70,5 @@ android {
 
 // All library dependencies
 dependencies {
-    compile fileTree(include: '*.jar', dir: 'libs')
+    implementation fileTree(include: '*.jar', dir: 'libs')
 }

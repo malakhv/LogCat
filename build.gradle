@@ -1,12 +1,16 @@
 // Auto-generated code
 buildscript {
-    repositories { jcenter() }
-    dependencies { classpath 'com.android.tools.build:gradle:2.2.3' }
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies { classpath 'com.android.tools.build:gradle:3.6.4' }
 }
 allprojects {
     repositories {
+        google()
         jcenter()
-        //maven { url "file://${rootDir}/artifacts/logcat" }
+        maven { url "file://${rootDir}/artifacts/logcat" }
         maven { url "file://${rootDir}/../zMaven" }
     }
 }
