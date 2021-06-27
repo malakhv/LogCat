@@ -43,6 +43,7 @@ task androidJavadocs(type: Javadoc) {
     afterEvaluate {
         failOnError = false
         source = android.sourceSets.main.java.srcDirs
+        // It is not necessary for this project
         //ext.androidJar = "${project.ANDROID_JAR}"
         //classpath += files(ext.androidJar)
         androidJavadocs.dependsOn project.assembleRelease

@@ -699,19 +699,6 @@ public final class LogCat {
     }
 
     /*----------------------------------------------------------------------------------------*/
-    /* Memory
-    /*----------------------------------------------------------------------------------------*/
-
-    /**
-     * Send a log message that contains information about memory usage.
-     * @param priority The priority/type of this log message.
-     * */
-    public static void printMemoryInfo(int priority) {
-        checkInit();
-        if (LogCat.isLoggable(priority)) printMemoryInfo_native(sAppTag, priority);
-    }
-
-    /*----------------------------------------------------------------------------------------*/
     /* Log Obfuscator
     /*----------------------------------------------------------------------------------------*/
 
@@ -889,18 +876,6 @@ public final class LogCat {
             boolean obfuscate) {
         return LogCat.println(priority, tag, msg + "\n" +
                 android.util.Log.getStackTraceString(tr), obfuscate);
-    }
-
-    /*----------------------------------------------------------------------------------------*/
-    /* Native
-    /*----------------------------------------------------------------------------------------*/
-
-    /** Send a log message that contains information about memory usage. */
-    private static native void printMemoryInfo_native(String tag, int priority);
-
-    /* Load a native library */
-    static {
-        System.loadLibrary("logcat-native-lib");
     }
 
 }

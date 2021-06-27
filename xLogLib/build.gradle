@@ -2,7 +2,7 @@
 ext {
     ARTIFACT_NAME = 'logcat'
     ARTIFACT_VERSION_CODE = 1
-    ARTIFACT_VERSION_NAME = '1.0.0'
+    ARTIFACT_VERSION_NAME = '0.1.0'
     ARTIFACT_GROUP_ID = "com.malakhv.libs"
 }
 
@@ -60,13 +60,6 @@ android {
         }
     }
     lintOptions {  abortOnError false  }
-
-    externalNativeBuild {
-        cmake {
-            path 'cpp/CMakeLists.txt'
-        }
-    }
-    ndkVersion '20.0.5594570'
 }
 
 // All library dependencies

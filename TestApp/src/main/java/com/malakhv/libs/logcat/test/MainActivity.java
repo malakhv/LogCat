@@ -11,7 +11,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private LogCat.LogObfuscator mObfuscator = null;
 
-    /**
+    /* *
      * setprop log.tag.xLogLib ERROR
      * setprop log.tag.xLogLib INFO
      * setprop log.tag.xLogLib DEBUG
@@ -45,21 +45,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
             LogCat.e(TAG, "Log level - ERROR");
             LogCat.printStackTrace(LogCat.ERROR);
             LogCat.printThreads(LogCat.ERROR);
-            LogCat.printMemoryInfo(LogCat.ERROR);
         }
 
         if (id == R.id.btn_w) {
             LogCat.w(TAG, "Log level - WARN");
             LogCat.printStackTrace(LogCat.WARN);
             LogCat.printThreads(LogCat.WARN);
-            LogCat.printMemoryInfo(LogCat.WARN);
         }
 
         if (id == R.id.btn_i) {
             LogCat.i(TAG, "Log level - INFO");
             LogCat.printStackTrace(LogCat.INFO);
             LogCat.printThreads(LogCat.INFO);
-            LogCat.printMemoryInfo(LogCat.INFO);
         }
 
         if (id == R.id.btn_d) {
@@ -88,7 +85,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             LogCat.printStackTrace(LogCat.VERBOSE);
             makeThreads(7);
             LogCat.printThreads(TAG, LogCat.VERBOSE);
-            LogCat.printMemoryInfo(LogCat.VERBOSE);
         }
 
     }
@@ -101,12 +97,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     /** Empty runnable */
-    private Runnable mEmptyRunnable = new Runnable() {
+    private final Runnable mEmptyRunnable = new Runnable() {
         @Override
         public void run() {
             try {
                 Thread.sleep(35 * 1000);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException ignored) {}
         }
     };
 }
