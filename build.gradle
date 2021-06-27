@@ -4,12 +4,13 @@ buildscript {
         google()
         jcenter()
     }
-    dependencies { classpath 'com.android.tools.build:gradle:3.6.4' }
+    dependencies { classpath 'com.android.tools.build:gradle:4.2.1' }
 }
 allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
         maven { url "file://${rootDir}/artifacts/logcat" }
         maven { url "file://${rootDir}/../zMaven" }
     }
