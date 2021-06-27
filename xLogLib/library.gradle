@@ -16,22 +16,82 @@
 
 apply plugin: 'maven'
 
-// The artifact's data
+/** The artifact's data */
 class Artifact {
     String path, groupId, version, id, name
 }
 
-// Define artifact
+/** Define artifact. */
 def artifact = new Artifact (
-    id: project.ARTIFACT_NAME,
-    name: project.ARTIFACT_NAME,
-    groupId: ARTIFACT_GROUP_ID,
-    path: "${rootDir}/artifacts/${project.ARTIFACT_NAME}",
-    version: project.ARTIFACT_VERSION_NAME
+        id: project.ARTIFACT_NAME,
+        name: project.ARTIFACT_NAME,
+        groupId: project.ARTIFACT_GROUP_ID,
+        path: "${rootDir}/artifacts/${project.ARTIFACT_NAME}",
+        version: project.ARTIFACT_VERSION_NAME
 )
 
-// Upload artifacts to local Maven repository
-uploadArchives {
+configurations { deployerJars }
+dependencies {
+    deployerJars "org.apache.maven.wagon:wagon-ftp:2.2"
+    "org.apache.maven.wagon:wagon-ftp:2.2"
+}
+
+/**
+ * Build JavaDoc.
+ * */
+task androidJavadocs(type: Javadoc) {
+    afterEvaluate {
+        failOnError = false
+        source = android.sourceSets.main.java.srcDirs
+        //ext.androidJar = "${project.ANDROID_JAR}"
+        //classpath += files(ext.androidJar)
+        androidJavadocs.dependsOn project.assembleRelease
+    }
+}
+task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+    classifier = 'javadoc'
+    from androidJavadocs.destinationDir
+}
+
+/**
+ * Make Source jar.
+ * */
+task androidSourcesJar(type: Jar) {
+    afterEvaluate {
+        classifier = 'sources'
+        from android.sourceSets.main.java.srcDirs
+    }
+}
+
+/**
+ * Print artifact data.
+ * */
+task printArtifact {
+    println "----------------------------------------------------------------------------------"
+    println "Artifact make complete successfully!"
+    println "Name: ${artifact.name}"
+    println "Version: ${artifact.version}"
+    println "Group: ${artifact.groupId}"
+    println "Patch: ${artifact.path}"
+    println "----------------------------------------------------------------------------------"
+}
+
+/**
+ * Zip artifact.
+ * */
+task zipRelease(type: Zip) {
+    from artifact.path
+    File destDir = file("${rootDir}/artifacts/")
+    destinationDir destDir
+    archiveName "${artifact.name}-${artifact.version}.zip"
+}
+
+/**
+ * Make artifact and upload it to local maven repo.
+ * */
+task makeArtifact(type: Upload) {
+    uploadDescriptor = true
+    configuration = configurations.archives
     repositories.mavenDeployer {
         pom.groupId = artifact.groupId
         pom.artifactId = artifact.id
@@ -48,43 +108,45 @@ uploadArchives {
         repository(url: "file://${artifact.path}")
     }
 }
-
-task androidJavadocs(type: Javadoc) {
-    failOnError = false
-    source = android.sourceSets.main.java.srcDirs
-    ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
-    classpath += files(ext.androidJar)
+configure(makeArtifact) {
+    group = 'publish'
+    description = 'Make artifact and upload it to local maven repo.'
 }
+makeArtifact.shouldRunAfter(clean)
+makeArtifact.dependsOn(assemble)
+makeArtifact.finalizedBy(printArtifact)
+makeArtifact.finalizedBy(zipRelease)
 
-task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
-    classifier = 'javadoc'
-    from androidJavadocs.destinationDir
+/**
+ * Make artifact's snapshot and upload it to local maven repo.
+ * */
+task makeSnapshot(type: Upload) {
+    uploadDescriptor = true
+    configuration = configurations.archives
+    repositories.mavenDeployer {
+        pom.groupId = artifact.groupId
+        pom.artifactId = artifact.id
+        pom.version = "${artifact.version}-SNAPSHOT"
+        pom.project {
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+        }
+        repository(url: "file://${artifact.path}")
+    }
 }
-
-task androidSourcesJar(type: Jar) {
-    classifier = 'sources'
-    from android.sourceSets.main.java.srcDirs
+configure(makeSnapshot) {
+    group = 'publish'
+    description = "Make artifact's snapshot and upload it to local maven repo."
 }
-
-task zipRelease(type: Zip) {
-    from artifact.path
-    File destDir = file("${rootDir}/artifacts/")
-    destinationDir destDir
-    archiveName "${artifact.name}-${artifact.version}.zip"
-}
-
-task makeArtifact  {
-    println "----------------------------------------------------------------------------------"
-    println "Artifact make complete successfully!"
-    println "Name: ${artifact.name}"
-    println "Version: ${artifact.version}"
-    println "Group: ${artifact.groupId}"
-    println "Patch: ${artifact.path}"
-    println "----------------------------------------------------------------------------------"
-}
-
-makeArtifact.dependsOn(uploadArchives)
-makeArtifact.dependsOn(zipRelease)
+makeSnapshot.shouldRunAfter(clean)
+makeSnapshot.dependsOn(assemble)
+makeSnapshot.finalizedBy(printArtifact)
+makeSnapshot.finalizedBy(zipRelease)
 
 artifacts {
     archives androidSourcesJar
