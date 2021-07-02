@@ -102,6 +102,9 @@ public final class LogCat {
     /** Tag for LogCat. */
     private static final String LOG_TAG = LogCat.class.getSimpleName();
 
+    /** The special symbol: New line. */
+    private static final String NEW_LINE = "\n";
+
     /*----------------------------------------------------------------------------------------*/
     /* General constants
     /*----------------------------------------------------------------------------------------*/
@@ -631,7 +634,6 @@ public final class LogCat {
         if (thread == null) {
             LogCat.w("Cannot print stack trace for thread - thread is null"); return;
         }
-        final String NEW_LINE = "\n";
         StackTraceElement[] elements = thread.getStackTrace();
         final StringBuilder builder = new StringBuilder(elements.length * 2);
         //TODO Could we remove from output following elements?:
@@ -654,7 +656,7 @@ public final class LogCat {
      * all active threads in current {@link ThreadGroup}.
      * */
     public static void printThreads() {
-        printThreads(null, DEBUG, Thread.currentThread().getThreadGroup());
+        printThreads(null, DEBUG);
     }
 
     /**
@@ -663,7 +665,7 @@ public final class LogCat {
      * @param priority The priority/type of this log message.
      * */
     public static void printThreads(int priority) {
-        printThreads(null, priority, Thread.currentThread().getThreadGroup());
+        printThreads(null, priority);
     }
 
     /**
@@ -686,7 +688,10 @@ public final class LogCat {
      * @param group The group of threads.
      * */
     public static void printThreads(String tag, int priority, ThreadGroup group) {
-        final String NEW_LINE = "\n";
+        if (group == null) {
+            LogCat.println(priority, tag, "ThreadGroup is null" , false);
+            return;
+        }
         int count = group.activeCount();
         final Thread[] threads = new Thread[count];
         int copied = group.enumerate(threads, true);
@@ -874,7 +879,7 @@ public final class LogCat {
      * */
     private static int println(int priority, String tag, String msg, Throwable tr,
             boolean obfuscate) {
-        return LogCat.println(priority, tag, msg + "\n" +
+        return LogCat.println(priority, tag, msg + NEW_LINE +
                 android.util.Log.getStackTraceString(tr), obfuscate);
     }
 
