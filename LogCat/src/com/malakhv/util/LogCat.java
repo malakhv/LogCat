@@ -16,7 +16,6 @@
 
 package com.malakhv.util;
 
-import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
 /**
@@ -781,7 +780,6 @@ public final class LogCat {
      * @param msg The message you would like logged.
      * @return The number of bytes written.
      * */
-    @SuppressLint("LogTagMismatch")
     private static int println(int priority, String tag, String msg) {
        return println(priority, tag, msg, sObfuscateByDefault);
     }
@@ -796,7 +794,6 @@ public final class LogCat {
      * @param obfuscate True, if you want to obfuscate log message.
      * @return The number of bytes written.
      * */
-    @SuppressLint("LogTagMismatch")
     private static int println(int priority, String tag, String msg, boolean obfuscate) {
         checkInit();
         if (LogCat.isLoggable(priority)) {
@@ -821,7 +818,6 @@ public final class LogCat {
      * @throws NullPointerException if {@code format == null}.
      * @throws java.util.IllegalFormatException if the format is invalid.
      * */
-    @SuppressLint("LogTagMismatch")
     private static int println(int priority, String tag, String format, Object... args) {
         return println(priority, tag, sObfuscateByDefault, format, args);
     }
@@ -840,7 +836,6 @@ public final class LogCat {
      * @throws NullPointerException if {@code format == null}.
      * @throws java.util.IllegalFormatException if the format is invalid.
      * */
-    @SuppressLint("LogTagMismatch")
     private static int println(int priority, String tag, boolean obfuscate, String format,
             Object... args) {
         // This is a double check, but it is faster than String.format()
