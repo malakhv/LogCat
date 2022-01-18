@@ -1,4 +1,4 @@
-# xLogCat
+# LogCat
 The library project includes classes for writing an app logs in Android. Is essentially a wrapper for the standard Android [Log](https://developer.android.com/reference/android/util/Log.html) class. The main difference is the automatically check the current log's level while trying to write logs. Also, there is a possibility to change the log level for the application at runtime via adb.
 
 ### LogCat class
